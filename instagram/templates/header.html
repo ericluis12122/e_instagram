@@ -1,0 +1,42 @@
+{% load static %}
+<header class="bg-white shadow-sm">
+    <div class="container py-3 d-flex justify-content-between align-items-center">
+        <!-- Logo -->
+        <h1 class="m-0 text-primary fw-bold">Instagram</h1>
+
+        <!-- Navegación -->
+        <nav>
+            <ul class="d-flex align-items-center list-unstyled m-0">
+                <li class="mx-3"><a href="{% url "home" %}" class="nav-link">Home</a></li>
+                <li class="mx-3"><a href="{% url "contact" %}" class="nav-link">Contact</a></li>
+                
+                {% if not request.user.is_authenticated %}
+                    <li class="mx-3"><a href="{% url "login" %}" class="btn btn-outline-primary">Login</a></li>
+                    <li class="mx-3"><a href="{% url "register" %}" class="btn btn-primary">Register</a></li>
+                {% else %}
+                    <li class="mx-3"><a href="{% url "profiles" %}" class="nav-link">All Profiles</a></li>
+                    <li class="mx-3"><a href="{% url "profile_detail" pk=request.user.profile.pk %}" class="nav-link">My Profile</a></li>
+                    <li class="mx-3"><a href="{% url "post_create" %}" class="btn btn-success">+ New Post</a></li>
+
+                    <!-- Imagen de perfil + Nombre -->
+                    <li class="d-flex align-items-center mx-3">
+                        <img src="{% if request.user.profile.profile_picture %}{{ request.user.profile.profile_picture.url }}{% else %}{% static 'default.svg' %}{% endif %}" 
+                             alt="Profile Picture"
+                             class="rounded-circle border"
+                             width="40" height="40"
+                             style="object-fit: cover; margin-right: 8px;">
+                        <span class="fw-semibold">{{ request.user.username }}</span>
+                    </li>
+
+                    <!-- Botón de Logout -->
+                    <li class="mx-3">
+                        <form action="{% url 'logout' %}" method="post" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">Logout</button>
+                        </form>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</header>

@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+
+{% block head_title %}Home page{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>Home page</h1>
+        <p>Welcome to the home page</p>
+        <section>
+            <h3>Last Posts</h3>
+            {% include "post_list.html" %}
+        </section>
+    </div>
+{% endblock %}

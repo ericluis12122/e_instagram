@@ -1,0 +1,42 @@
+{% load static %}
+<div class="row">
+    {% for post in posts %}
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card shadow-sm h-100 d-flex flex-column">
+            <div class="ratio ratio-4x3">
+                <img src="{% if post.image %}{{ post.image.url }}{% else %}{% static 'posts_images/default.svg' %}{% endif %}" 
+                     class="card-img-top object-fit-cover" 
+                     alt="Post image">
+            </div>
+            <div class="card-body d-flex flex-column">
+                <p class="card-text">{{ post.caption }}</p>
+                <p class="text-muted small">
+                    Created by <strong>{{ post.user.username }}</strong> at {{ post.created_at|date:"d M Y H:i" }}
+                </p>
+                
+                <div class="d-flex justify-content-between">
+                    {% if user.is_authenticated %}
+                        <!-- Si el usuario está logeado, mostramos el botón de like -->
+                        {% include 'like_button.html' %}
+                    {% else %}
+                        <!-- Si el usuario no está logeado, mostramos solo el texto 'Like' -->
+                        <p>Likes: {{ post.likes.count }}</p>
+                    {% endif %}
+                    
+                    <!-- Ícono de comentarios con la cantidad de comentarios -->
+                    <p>
+                        <i class="bi bi-chat-dots"></i> {{ post.comments.count }}
+                    </p>
+                </div>
+                
+                <a href="{% url 'post_detail' pk=post.pk %}" class="btn btn-primary mt-auto">View More</a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p class="text-center">No posts available.</p>
+    {% endfor %}
+</div>
+
+<!-- Aquí se carga el archivo JS -->
+<script src="{% static 'js/like_button.js' %}"></script>

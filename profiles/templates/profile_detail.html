@@ -1,0 +1,52 @@
+{% extends "layout.html" %}
+{% load static %}
+{% block head_title %}{{ profile.user.username }}'s Profile{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="card shadow-lg p-4 text-center">
+        <!-- Foto y Nombre -->
+        <h1 class="mb-3 fw-bold text-primary">{{ profile.user.username }}'s Profile</h1>
+        <img src="{% if profile.profile_picture %}{{ profile.profile_picture.url }}{% else %}{% static 'default.svg' %}{% endif %}" 
+             class="rounded-circle border border-3" 
+             alt="{{ profile.user.username }}'s profile picture" 
+             width="150" height="150" 
+             style="object-fit: cover;">
+        <!-- Datos del Perfil -->
+        <div class="mt-4 text-start mx-auto" style="max-width: 500px;">
+            <p><strong>Bio:</strong> {{ profile.bio|default_if_none:"No bio available." }}</p>
+            <p><strong>Birthdate:</strong> {{ profile.birth_date|default_if_none:"Not provided." }}</p>
+            <p><strong>Followers:</strong> {{ profile.follower_set.count }}</p>
+            <p><strong>Following:</strong> {{ profile.following_set.count }}</p>
+
+            <!-- Botones Follow/Unfollow -->
+            {% if profile != request.user.profile %}
+                <div class="d-flex justify-content-center gap-2 mt-3">
+                    <form method="POST" action="{% url 'follow_unfollow' user_id=profile.user.id %}">
+                        {% csrf_token %}
+                        {% if profile in request.user.profile.followers.all %}
+                            <button type="submit" class="btn btn-danger">Unfollow</button>
+                        {% else %}
+                            <button type="submit" class="btn btn-primary">Follow</button>
+                        {% endif %}
+                    </form>
+                </div>
+            {% endif %}
+            
+            <!-- Botón Edit Profile -->
+            {% if profile.user == request.user %}
+                <div class="text-center mt-3">
+                    <a href="{% url 'profile_update' profile.pk %}" class="btn btn-warning">Edit Profile</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Sección de Posts -->
+    <section class="mt-5">
+        <h3 class="mb-3 fw-bold">Posts</h3>
+        {% include "post_list.html" %}
+    </section>
+</div>
+
+{% endblock %}
